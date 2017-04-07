@@ -1,0 +1,19 @@
+{
+  "name": "@await/retry",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./retry.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/runkitdev/await-retry"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Francisco Ryan Tolmasky I",
+  "license": "MIT",
+  "bugs": {
+    "url" : "https://github.com/runkitdev/await-retry/issues"
+   }
+}
