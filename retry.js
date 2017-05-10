@@ -1,30 +1,29 @@
 
+
 module.exports = function retry(aFunction, options)
 {
     if (!options)
         options = { };
 
-    var delay = options.delay === undefined ? 0 : options.delay;
-    var times = options.times === undefined ? Infinity : options.times;
+    const delay = options.delay === undefined ? 0 : options.delay;
+    const maximumRetries = options.maximumRetries === undefined ? Infinity : options.maximumRetries;
+    const onlyRetryIf = typeof options.onlyRetryIf === "function" ? options.onlyRetryIf : () => true;
 
-    return internal(aFunction, delay, times);
+    return internal(aFunction, delay, maximumRetries, onlyRetryIf);
 }
 
-function internal(aFunction, delayTime, times)
+function internal(aFunction, delayTime, maximumRetries, onlyRetryIf)
 {
     return new Promise(function (resolve, reject)
     {
         return aFunction()
             .catch (function (anError)
             {
-                if (times <= 0)
+                if (maximumRetries <= 0 || !onlyRetryIf(anError))
                     return reject(new RetryError(anError));
             
                 return delay(delayTime)
-                    .then(function ()
-                    {
-                        return internal(aFunction, times - 1, delay)
-                    });
+                    .then(() => internal(aFunction, maximumRetries - 1, delay, onlyRetryIf));
             })
             .then(resolve)
             .catch(reject);
@@ -33,10 +32,7 @@ function internal(aFunction, delayTime, times)
 
 function delay(delay)
 {
-    return new Promise(function (resolve, reject)
-    {
-        setTimeout(resolve, delay);
-    });
+    return new Promise(resolve => setTimeout(resolve, delay));
 }
 
 function RetryError()
