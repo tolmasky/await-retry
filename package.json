@@ -1,6 +1,6 @@
 {
   "name": "@await/retry",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "",
   "main": "./retry.js",
   "repository": {
@@ -15,8 +15,5 @@
   "license": "MIT",
   "bugs": {
      "url" : "https://github.com/runkitdev/await-retry/issues"
-   },
-   "engines": {
-     "node": "^4.0.0"
    }
 }
