@@ -14,20 +14,15 @@ module.exports = function retry(aFunction, options)
 
 function internal(aFunction, delayTime, maximumRetries, onlyRetryIf)
 {
-    return new Promise(function (resolve, reject)
-    {
-        return aFunction()
-            .catch (function (anError)
-            {
-                if (maximumRetries <= 0 || !onlyRetryIf(anError))
-                    return reject(new RetryError(anError));
-            
-                return delay(delayTime)
-                    .then(() => internal(aFunction, maximumRetries - 1, delay, onlyRetryIf));
-            })
-            .then(resolve)
-            .catch(reject);
-    });
+    return new Promise (resolve => resolve(aFunction()))
+        .catch (function (anError)
+        {
+            if (maximumRetries <= 0 || !onlyRetryIf(anError))
+                throw new RetryError(anError);
+
+            return delay(delayTime)
+                .then(() => internal(aFunction, delayTime, maximumRetries - 1, onlyRetryIf));
+        });
 }
 
 function delay(delay)
@@ -35,7 +30,7 @@ function delay(delay)
     return new Promise(resolve => setTimeout(resolve, delay));
 }
 
-function RetryError()
+function RetryError(anError)
 {
     const error = new Error("No more retries");
 
@@ -46,6 +41,8 @@ function RetryError()
         enumerable: false,
         configurable: true
     });
+
+    error.cause = anError;
 
     Object.setPrototypeOf(error, RetryError.prototype);
 
